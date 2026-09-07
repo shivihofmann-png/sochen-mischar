@@ -153,3 +153,57 @@ else:
 st.caption(
     "⚠️ דמו בלבד — אין מסחר בכסף אמיתי"
 )
+st.divider()
+st.subheader("💰 תיק דמו")
+
+if "cash" not in st.session_state:
+    st.session_state.cash = 10000.0
+
+if "holding" not in st.session_state:
+    st.session_state.holding = None
+
+if "entry_price" not in st.session_state:
+    st.session_state.entry_price = 0.0
+
+if "invested" not in st.session_state:
+    st.session_state.invested = 0.0
+
+if winner[5] >= 80 and st.session_state.holding is None:
+    amount = st.session_state.cash * 0.30
+
+    st.session_state.cash -= amount
+    st.session_state.holding = winner[0]
+    st.session_state.entry_price = winner[1]
+    st.session_state.invested = amount
+
+    st.success(
+        f"🟢 קנייה וירטואלית: {winner[0]} בסכום ₪{amount:,.2f}"
+    )
+
+if st.session_state.holding is not None:
+    current_price = None
+
+    for item in results:
+        if item[0] == st.session_state.holding:
+            current_price = item[1]
+            break
+
+    if current_price is not None:
+        current_value = (
+            st.session_state.invested
+            * current_price
+            / st.session_state.entry_price
+        )
+    else:
+        current_value = st.session_state.invested
+
+    total_value = st.session_state.cash + current_value
+    profit = total_value - 10000.0
+
+    st.metric("שווי תיק", f"₪{total_value:,.2f}")
+    st.metric("מזומן", f"₪{st.session_state.cash:,.2f}")
+    st.metric("רווח / הפסד", f"₪{profit:,.2f}")
+
+    st.write(
+        f"📌 מחזיק כרגע: {st.session_state.holding}"
+    )
