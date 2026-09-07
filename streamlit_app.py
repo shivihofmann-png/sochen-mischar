@@ -1,16 +1,17 @@
 import streamlit as st
 import yfinance as yf
 st.title("🤖 סוכן המסחר שלי")
-st.success("✅ הסוכן פעיל ומוכן לעבודה")
-st.success("App is working")
-symbol = st.selectbox(
-    "בחר מניה"
+     symbol = st.selectbox(
+    "בחר מניה",
     ["MSFT", "NVDA", "AAPL", "AMZN", "GOOGL", "META", "TSLA", "QQQ", "SPY"]
-st.metric("מחיר עדכני", f"${price:,.2f}")
+)
+
+if st.button("בדוק מחיר עדכני"):
     data = yf.Ticker(symbol).history(period="5d")
 
     if data.empty:
-        st.error("No market data received")
+        st.error("לא התקבלו נתוני שוק")
     else:
         price = float(data["Close"].iloc[-1])
-        st.metric(,"מחיר עדכני") f"${price:,.2f}")
+        st.metric("מחיר עדכני", f"${price:,.2f}")
+        
