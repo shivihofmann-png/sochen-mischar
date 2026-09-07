@@ -142,15 +142,13 @@ if st.button("🚀 סרוק את כל המניות"):
             f"עם ציון "
             f"{winner[5]}/100"
         )
-if "winner" in locals() and winner[5] >= 80:
-    st.success("🟢 החלטת הסוכן: מועמדת חזקה")
-
-elif winner[5] >= 70:
-    st.warning("🟡 החלטת הסוכן: מעקב")
-
-else:
-    st.error("🔴 החלטת הסוכן: לא לפעול כרגע")
-st.caption(
+if "winner" in locals():
+    if winner[5] >= 80:
+        st.success("🟢 החלטת הסוכן: מועמדת חזקה")
+    elif winner[5] >= 70:
+        st.warning("🟡 החלטת הסוכן: מעקב")
+    else:
+        st.error("🔴 החלטת הסוכן: לא לפעול כרגע")
     "⚠️ דמו בלבד — אין מסחר בכסף אמיתי"
 )
 st.divider()
