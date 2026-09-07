@@ -157,7 +157,7 @@ if st.button("🚀 סרוק את כל המניות"):
         key=lambda x: x["ציון"],
         reverse=True
     )
-
+st.session_state.last_results = results
     if results:
         st.subheader("🏆 דירוג הסוכן")
 
