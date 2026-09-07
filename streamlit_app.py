@@ -6,9 +6,7 @@ st.success("App is working")
 symbol = st.selectbox(
     "בחר מניה"
     ["MSFT", "NVDA", "AAPL", "AMZN", "GOOGL", "META", "TSLA", "QQQ", "SPY"]
-)
-
-if st.button "בדוק מחיר עדכני"
+st.metric("מחיר עדכני", f"${price:,.2f}")
     data = yf.Ticker(symbol).history(period="5d")
 
     if data.empty:
