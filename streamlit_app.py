@@ -1,4 +1,6 @@
 import streamlit as st
+import yfinance as yf
+import pandas as pd
 from datetime import datetime
 
 st.set_page_config(
@@ -8,124 +10,104 @@ st.set_page_config(
 )
 
 # -------------------------
-# נתוני התחלה
+# הגדרות
 # -------------------------
-if "cash" not in st.session_state:
-    st.session_state.cash = 10000.0
 
-if "profit" not in st.session_state:
-    st.session_state.profit = 0.0
+STARTING_CASH = 10000.0
 
-if "holding" not in st.session_state:
-    st.session_state.holding = "MSFT"
-
-if "runs" not in st.session_state:
-    st.session_state.runs = 0
-
-# כרגע ציוני הדגמה מהגרסה שבנינו
-ranking = [
-    ("MSFT", 88.1),
-    ("NVDA", 84.6),
-    ("QQQ", 77.3),
-    ("SPY", 77.2),
-    ("AAPL", 72.6),
-]
-
-# -------------------------
-# עיצוב
-# -------------------------
-st.markdown("""
-<style>
-    .stApp {
-        direction: rtl;
-    }
-
-    h1, h2, h3, p {
-        text-align: right;
-    }
-
-    div.stButton > button {
-        width: 100%;
-        height: 65px;
-        font-size: 22px;
-        font-weight: bold;
-    }
-</style>
-""", unsafe_allow_html=True)
-
-# -------------------------
-# כותרת
-# -------------------------
-st.title("🤖 סוכן המסחר שלי")
-st.caption("מערכת ניסוי למסחר וירטואלי בלבד")
-
-st.divider()
+ASSETS = {
+    "MSFT": "Microsoft",
+    "NVDA": "NVIDIA",
+    "AAPL": "Apple",
+    "AMZN": "Amazon",
+    "GOOGL": "Alphabet",
+    "META": "Meta",
+    "TSLA": "Tesla",
+    "QQQ": "Nasdaq 100 ETF",
+    "SPY": "S&P 500 ETF"
+}
 
 # -------------------------
 # מצב התיק
 # -------------------------
-st.subheader("💰 מצב התיק")
 
-col1, col2 = st.columns(2)
+if "cash" not in st.session_state:
+    st.session_state.cash = STARTING_CASH
 
-with col1:
-    st.metric(
-        "שווי תיק",
-        f"₪{st.session_state.cash:,.2f}"
-    )
+if "positions" not in st.session_state:
+    st.session_state.positions = {}
 
-with col2:
-    st.metric(
-        "רווח / הפסד",
-        f"₪{st.session_state.profit:,.2f}"
-    )
-
-st.write(f"📌 **מחזיק כרגע:** {st.session_state.holding}")
-
-st.divider()
+if "trades" not in st.session_state:
+    st.session_state.trades = []
 
 # -------------------------
-# הפעלת הסוכן
+# קבלת נתוני שוק
 # -------------------------
-if st.button("▶️ הפעל את סוכן המסחר"):
-    st.session_state.runs += 1
 
-    best_symbol = ranking[0][0]
-    best_score = ranking[0][1]
-
-    st.session_state.holding = best_symbol
-
-    st.success("✅ הסוכן סיים לבדוק את השוק")
-
-    st.write("### 🤖 החלטת הסוכן")
-    st.write(f"🔵 **החזק {best_symbol}**")
-    st.write(
-        f"הנכס בעל הציון הגבוה ביותר כרגע הוא "
-        f"**{best_symbol} — {best_score}**"
+@st.cache_data(ttl=900)
+def get_market_data(symbol):
+    data = yf.download(
+        symbol,
+        period="6mo",
+        interval="1d",
+        progress=False,
+        auto_adjust=True
     )
 
-    st.write(
-        "🕒 בדיקה אחרונה:",
-        datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    if data.empty or len(data) < 30:
+        return None
+
+    close = data["Close"]
+
+    if isinstance(close, pd.DataFrame):
+        close = close.iloc[:, 0]
+
+    close = close.dropna()
+
+    if len(close) < 30:
+        return None
+
+    price = float(close.iloc[-1])
+
+    ma20 = float(close.tail(20).mean())
+    ma50 = float(close.tail(50).mean()) if len(close) >= 50 else ma20
+
+    return_20 = (
+        (price / float(close.iloc[-21]) - 1) * 100
+        if len(close) >= 21
+        else 0
     )
 
-st.divider()
+    return_60 = (
+        (price / float(close.iloc[-61]) - 1) * 100
+        if len(close) >= 61
+        else return_20
+    )
 
-# -------------------------
-# דירוג
-# -------------------------
-st.subheader("🏆 דירוג הנכסים")
+    volatility = float(close.pct_change().tail(20).std() * 100)
 
-for number, (symbol, score) in enumerate(ranking, start=1):
-    st.write(f"**{number}. {symbol}** — ציון {score}")
+    return {
+        "price": price,
+        "ma20": ma20,
+        "ma50": ma50,
+        "return20": return_20,
+        "return60": return_60,
+        "volatility": volatility
+    }
 
-st.divider()
 
-st.info(
-    "⚠️ כרגע המערכת היא סביבת ניסוי בלבד. "
-    "היא אינה קונה או מוכרת ניירות ערך בכסף אמיתי."
-)
+def calculate_score(d):
+    score = 50.0
 
-st.caption(
-    f"מספר בדיקות שבוצעו באפליקציה: {st.session_state.runs}"
-)
+    if d["price"] > d["ma20"]:
+        score += 12
+    else:
+        score -= 12
+
+    if d["ma20"] > d["ma50"]:
+        score += 12
+    else:
+        score -= 8
+
+    score += max(-15, min(15, d["return20"] * 0.7))
+    score += max(-10,
