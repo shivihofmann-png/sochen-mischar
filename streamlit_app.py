@@ -142,7 +142,7 @@ if st.button("🚀 סרוק את כל המניות"):
             f"עם ציון "
             f"{winner[5]}/100"
         )
-if winner[5] >= 80:
+if "winner" in locals() and winner[5] >= 80:
     st.success("🟢 החלטת הסוכן: מועמדת חזקה")
 
 elif winner[5] >= 70:
