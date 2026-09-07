@@ -3,120 +3,96 @@ import yfinance as yf
 
 st.set_page_config(
     page_title="סוכן המסחר שלי",
-    page_icon="🤖",
-    layout="centered"
+    page_icon="🤖"
 )
-
-st.markdown("""
-<style>
-.stApp { direction: rtl; }
-h1, h2, h3, p { text-align: right; }
-</style>
-""", unsafe_allow_html=True)
-
-STARTING_CASH = 10000.0
-STOCKS = [
-    "MSFT", "NVDA", "AAPL", "AMZN",
-    "GOOGL", "META", "TSLA", "QQQ", "SPY"
-]
-
-if "demo_cash" not in st.session_state:
-    st.session_state.demo_cash = STARTING_CASH
-
-if "holding" not in st.session_state:
-    st.session_state.holding = None
-
-if "entry_price" not in st.session_state:
-    st.session_state.entry_price = 0.0
-
-if "invested_ils" not in st.session_state:
-    st.session_state.invested_ils = 0.0
-
-if "last_results" not in st.session_state:
-    st.session_state.last_results = []
-
-
-def analyze(ticker):
-    data = yf.Ticker(ticker).history(period="6mo")
-
-    if data.empty or len(data) < 50:
-        return None
-
-    close = data["Close"].dropna()
-
-    if len(close) < 50:
-        return None
-
-    price = float(close.iloc[-1])
-    ma20 = float(close.tail(20).mean())
-    ma50 = float(close.tail(50).mean())
-    change = (price / float(close.iloc[-20]) - 1) * 100
-
-    score = 0
-
-    if price > ma20:
-        score += 1
-
-    if ma20 > ma50:
-        score += 1
-
-    if change > 0:
-        score += 1
-
-    return {
-        "מניה": ticker,
-        "מחיר": price,
-        "שינוי": change,
-        "ממוצע20": ma20,
-        "ממוצע50": ma50,
-        "ציון": score,
-    }
-
 
 st.title("🤖 סוכן המסחר שלי")
-st.success("✅ הסוכן פעיל — מצב דמו בלבד")
+st.success("✅ הסוכן פעיל")
 
-st.subheader("💰 תיק דמו")
-
-c1, c2 = st.columns(2)
-c1.metric("הון התחלתי", "₪10,000")
-c2.metric("מצב", "דמו")
-
-symbol = st.selectbox(
-    "בחר מניה לבדיקה",
-    STOCKS
+st.metric(
+    "תיק דמו",
+    "₪10,000"
 )
 
-if st.button("🔍 נתח את המניה"):
-    try:
-        item = analyze(symbol)
+stocks = [
+    "MSFT",
+    "NVDA",
+    "AAPL",
+    "AMZN",
+    "GOOGL",
+    "META",
+    "TSLA",
+    "QQQ",
+    "SPY"
+]
 
-        if item is None:
-            st.error("לא התקבלו מספיק נתוני שוק.")
+if st.button("🚀 סרוק את כל המניות"):
 
-        else:
-            st.subheader("📊 תוצאות הניתוח")
+    results = []
 
-            st.metric(
-                "מחיר נוכחי",
-                f'${item["מחיר"]:.2f}'
+    for ticker in stocks:
+
+        data = yf.Ticker(ticker).history(
+            period="3mo"
+        )
+
+        if len(data) >= 20:
+
+            close = data["Close"]
+
+            price = float(
+                close.iloc[-1]
             )
 
-            st.metric(
-                "שינוי בתקופה",
-                f'{item["שינוי"]:.2f}%'
+            old_price = float(
+                close.iloc[-20]
             )
 
-            st.write(
-                f'ממוצע 20 יום: ${item["ממוצע20"]:.2f}'
+            change = (
+                price / old_price - 1
+            ) * 100
+
+            results.append(
+                (
+                    ticker,
+                    price,
+                    change
+                )
             )
 
-            st.write(
-                f'ממוצע 50 יום: ${item["ממוצע50"]:.2f}'
-            )
+    results.sort(
+        key=lambda x: x[2],
+        reverse=True
+    )
 
-            if item["ציון"] == 3:
-                st.success("🟢 החלטת הסוכן: מועמדת לקנייה")
+    st.subheader(
+        "🏆 דירוג לפי מומנטום"
+    )
 
-            elif item["ציון"] == 2:
-                st.warning("🟡 החלטת הס
+    for i, item in enumerate(
+        results,
+        start=1
+    ):
+
+        ticker = item[0]
+        price = item[1]
+        change = item[2]
+
+        st.write(
+            f"{i}. {ticker} | "
+            f"${price:.2f} | "
+            f"{change:.2f}%"
+        )
+
+    if results:
+
+        winner = results[0]
+
+        st.success(
+            f"🏆 המובילה כרגע: "
+            f"{winner[0]}"
+        )
+
+st.caption(
+    "⚠️ דמו בלבד — אין מסחר בכסף אמיתי"
+)
