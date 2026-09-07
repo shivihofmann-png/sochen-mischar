@@ -177,3 +177,76 @@ if st.button("🚀 סרוק את כל המניות"):
         )
     else:
         st.error("לא התקבלו מספיק נתונים לסריקה")
+st.divider()
+st.subheader("💰 תיק דמו אוטונומי")
+
+if "demo_cash" not in st.session_state:
+    st.session_state.demo_cash = 10000.0
+
+if "demo_holding" not in st.session_state:
+    st.session_state.demo_holding = None
+
+if "demo_entry_price" not in st.session_state:
+    st.session_state.demo_entry_price = 0.0
+
+if "demo_amount" not in st.session_state:
+    st.session_state.demo_amount = 0.0
+
+if "last_results" in st.session_state and st.session_state.last_results:
+    winner = st.session_state.last_results[0]
+
+    if st.session_state.demo_holding is None:
+        if winner["ציון"] == 3:
+            investment = st.session_state.demo_cash * 0.30
+            st.session_state.demo_cash -= investment
+            st.session_state.demo_holding = winner["מניה"]
+            st.session_state.demo_entry_price = winner["מחיר"]
+            st.session_state.demo_amount = investment
+
+            st.success(
+                f'🟢 קנייה וירטואלית: {winner["מניה"]}'
+            )
+
+    current_value = st.session_state.demo_amount
+
+    if st.session_state.demo_holding:
+        for item in st.session_state.last_results:
+            if item["מניה"] == st.session_state.demo_holding:
+                current_value = (
+                    st.session_state.demo_amount
+                    * item["מחיר"]
+                    / st.session_state.demo_entry_price
+                )
+
+    total_value = (
+        st.session_state.demo_cash
+        + current_value
+    )
+
+    profit = total_value - 10000.0
+
+    st.metric(
+        "שווי תיק",
+        f"₪{total_value:,.2f}"
+    )
+
+    st.metric(
+        "מזומן",
+        f"₪{st.session_state.demo_cash:,.2f}"
+    )
+
+    st.metric(
+        "רווח / הפסד",
+        f"₪{profit:,.2f}"
+    )
+
+    if st.session_state.demo_holding:
+        st.write(
+            f"📌 מחזיק כרגע: "
+            f"{st.session_state.demo_holding}"
+        )
+else:
+    st.info(
+        "בצע קודם סריקה אוטומטית "
+        "כדי שהסוכן יוכל לבחור נכס."
+    )
