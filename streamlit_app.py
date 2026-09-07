@@ -113,3 +113,67 @@ if st.button("🔍 נתח את המניה"):
     except Exception as e:
         st.error("אירעה שגיאה בקבלת נתוני השוק")
         st.write(str(e))
+st.divider()
+st.subheader("🤖 סריקה אוטומטית")
+
+if st.button("🚀 סרוק את כל המניות"):
+    results = []
+
+    with st.spinner("הסוכן סורק את השוק..."):
+        for ticker in stocks:
+            try:
+                data = yf.Ticker(ticker).history(period="6mo")
+
+                if len(data) >= 50:
+                    close = data["Close"]
+                    price = float(close.iloc[-1])
+                    ma20 = float(close.tail(20).mean())
+                    ma50 = float(close.tail(50).mean())
+                    change = (price / float(close.iloc[-20]) - 1) * 100
+
+                    score = 0
+
+                    if price > ma20:
+                        score += 1
+                    if ma20 > ma50:
+                        score += 1
+                    if change > 0:
+                        score += 1
+
+                    results.append(
+                        {
+                            "מניה": ticker,
+                            "מחיר": round(price, 2),
+                            "שינוי %": round(change, 2),
+                            "ציון": score
+                        }
+                    )
+
+            except Exception:
+                pass
+
+    results = sorted(
+        results,
+        key=lambda x: x["ציון"],
+        reverse=True
+    )
+
+    if results:
+        st.subheader("🏆 דירוג הסוכן")
+
+        for i, item in enumerate(results, start=1):
+            st.write(
+                f'{i}. {item["מניה"]} | '
+                f'ציון {item["ציון"]}/3 | '
+                f'${item["מחיר"]} | '
+                f'{item["שינוי %"]}%'
+            )
+
+        winner = results[0]
+
+        st.success(
+            f'🏆 המועמד המוביל: {winner["מניה"]} '
+            f'עם ציון {winner["ציון"]}/3'
+        )
+    else:
+        st.error("לא התקבלו מספיק נתונים לסריקה")
