@@ -9,10 +9,6 @@ st.set_page_config(
     layout="centered"
 )
 
-# -------------------------
-# הגדרות
-# -------------------------
-
 STARTING_CASH = 10000.0
 
 ASSETS = {
@@ -27,22 +23,8 @@ ASSETS = {
     "SPY": "S&P 500 ETF"
 }
 
-# -------------------------
-# מצב התיק
-# -------------------------
-
 if "cash" not in st.session_state:
     st.session_state.cash = STARTING_CASH
-
-if "positions" not in st.session_state:
-    st.session_state.positions = {}
-
-if "trades" not in st.session_state:
-    st.session_state.trades = []
-
-# -------------------------
-# קבלת נתוני שוק
-# -------------------------
 
 @st.cache_data(ttl=900)
 def get_market_data(symbol):
@@ -68,7 +50,6 @@ def get_market_data(symbol):
         return None
 
     price = float(close.iloc[-1])
-
     ma20 = float(close.tail(20).mean())
     ma50 = float(close.tail(50).mean()) if len(close) >= 50 else ma20
 
@@ -84,7 +65,9 @@ def get_market_data(symbol):
         else return_20
     )
 
-    volatility = float(close.pct_change().tail(20).std() * 100)
+    volatility = float(
+        close.pct_change().tail(20).std() * 100
+    )
 
     return {
         "price": price,
@@ -92,22 +75,4 @@ def get_market_data(symbol):
         "ma50": ma50,
         "return20": return_20,
         "return60": return_60,
-        "volatility": volatility
-    }
-
-
-def calculate_score(d):
-    score = 50.0
-
-    if d["price"] > d["ma20"]:
-        score += 12
-    else:
-        score -= 12
-
-    if d["ma20"] > d["ma50"]:
-        score += 12
-    else:
-        score -= 8
-
-    score += max(-15, min(15, d["return20"] * 0.7))
-    score += max(-10,
+        "vol
