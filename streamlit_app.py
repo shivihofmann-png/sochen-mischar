@@ -6,7 +6,7 @@ st.set_page_config(
     page_icon="🤖"
 )
 
-st.title("🤖 סוכן המסחר שלי")6
+st.title("🤖 סוכן המסחר שלי")
 st.success("✅ הסוכן פעיל")
 
 st.metric(
