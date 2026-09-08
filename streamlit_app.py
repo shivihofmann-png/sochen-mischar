@@ -281,10 +281,8 @@ current_month = today.strftime("%Y-%m")
 
 if "last_withdrawal_month" not in st.session_state:
     st.session_state.last_withdrawal_month = None
-
 if "bank_balance" not in st.session_state:
-    st.session_state.bank_balance 
-
+    st.session_state.bank_balance = 0.0
 if (
     total_value > 50000
     and st.session_state.last_withdrawal_month != current_month
