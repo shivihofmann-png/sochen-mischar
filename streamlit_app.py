@@ -214,3 +214,13 @@ if st.session_state.holding is not None:
     st.write(
         f"📌 מחזיק כרגע: {st.session_state.holding}"
     )
+st.divider()
+st.subheader("📒 יומן עסקאות")
+
+if st.session_state.trade_log:
+    st.dataframe(
+        st.session_state.trade_log,
+        use_container_width=True
+    )
+else:
+    st.info("עדיין אין עסקאות ביומן")
