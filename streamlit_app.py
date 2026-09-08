@@ -202,16 +202,17 @@ if st.session_state.holding is not None:
             * current_price
             / st.session_state.entry_price
         )
+       trade_profit = current_value - st.session_state.invested
     else:
         current_value = st.session_state.invested
-
+        trade_profit = 0.0
+        
     total_value = st.session_state.cash + current_value
     profit = total_value - 10000.0
-
     st.metric("שווי תיק", f"₪{total_value:,.2f}")
     st.metric("מזומן", f"₪{st.session_state.cash:,.2f}")
     st.metric("רווח / הפסד", f"₪{profit:,.2f}")
-
+    st.metric("רווח / הפסד בעסקה", f"₪{trade_profit:,.2f}")
     st.write(
         f"📌 מחזיק כרגע: {st.session_state.holding}"
     )
