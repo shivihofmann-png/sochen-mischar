@@ -1,0 +1,28 @@
+name: Trading Agent
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 15 * * 1-5"
+
+permissions:
+  contents: write
+
+jobs:
+  run-agent:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install packages
+        run: pip install -r requirements.txt
+
+      - name: Run trading agent
+        run: python streamlit_app.py
