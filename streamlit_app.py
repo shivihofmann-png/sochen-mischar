@@ -275,3 +275,29 @@ if st.session_state.trade_log:
     )
 else:
     st.info("עדיין אין עסקאות ביומן")
+# משיכת רווחים מעל 50,000 ש"ח - פעם בחודש
+today = datetime.now(timezone(timedelta(hours=3)))
+current_month = today.strftime("%Y-%m")
+
+if "last_withdrawal_month" not in st.session_state:
+    st.session_state.last_withdrawal_month = None
+
+if "bank_balance" not in st.session_state:
+    st.session_state.bank_balance = 0.0
+
+if (
+    total_value > 50000
+    and st.session_state.last_withdrawal_month != current_month
+):
+    withdrawal = total_value - 50000
+    st.session_state.bank_balance += withdrawal
+    st.session_state.last_withdrawal_month = current_month
+
+    st.success(
+        f'🏦 הועברו ₪{withdrawal:,.2f} לחשבון הבנק'
+    )
+
+st.metric(
+    "🏦 סה״כ הועבר לבנק",
+    f'₪{st.session_state.bank_balance:,.2f}'
+)
