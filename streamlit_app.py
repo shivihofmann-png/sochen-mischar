@@ -177,7 +177,7 @@ if "winner" in locals() and winner[5] >= 80 and st.session_state.holding is None
     "מחיר קנייה": winner[1],
     "סכום": amount,
     "ציון": winner[5],
-        "זמן קנייה": datetime.now().strftime("%d/%m/%Y %H:%M")
+      "זמן קנייה": datetime.now(timezone(timedelta(hours=3))).strftime("%d/%m/%Y %H:%M")  
 })
     st.session_state.cash -= amount
     st.session_state.holding = winner[0]
