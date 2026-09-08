@@ -191,13 +191,9 @@ if "winner" in locals() and winner[5] >= 80 and st.session_state.holding is None
 current_value = 0.0
 trade_profit = 0.0
 if st.session_state.holding is not None:
-    current_price = None
-
-    for item in results:
-        if item[0] == st.session_state.holding:
-            current_price = item[1]
-            break
-
+    
+            current_data = yf.Ticker(st.session_state.holding).history(period="1d")
+            current_price = float(current_data["Close"].iloc[-1]) if not current_data.empty else None
             
         if current_price is not None:
             current_value = (
