@@ -1,11 +1,29 @@
 import streamlit as st
 import yfinance as yf
 from datetime import datetime, timezone, timedelta
+import json
+STATE_FILE = "portfolio_state.json"
+def save_state():
+        data = {}
+        for key in ["cash", "invested", "holding", "entry_price", "trade_log", "bank_balance", "last_withdrawal_month"] :
+                 if key in st.session_state:
+                                 data[key] = st.session_state[key]
+        with open(STATE_FILE, "w") as f:
+        json.dump(data, f)
+
+def load_state():
+        try:
+        with open(STATE_FILE, "r") as f:
+            data = json.load(f)
+        for key, value in data.items():
+            st.session_state[key] = value
+except (FileNotFoundError, json.JSONDecodeError):
+        pass
 st.set_page_config(
     page_title="סוכן המסחר שלי",
     page_icon="🤖"
 )
-
+load_state()
 st.title("🤖 סוכן המסחר שלי")
 st.success("✅ הסוכן פעיל")
 
@@ -302,3 +320,4 @@ st.metric(
     f'₪{st.session_state.bank_balance:,.2f}'
 )
 
+save_state()
