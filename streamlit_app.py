@@ -23,7 +23,23 @@ stocks = [
     "META",
     "TSLA",
     "QQQ",
-    "SPY"
+    "SPY",
+    "AMD",
+    "AVGO",
+    "NFLX",
+    "CRM",
+    "ORCL",
+    "PLTR",
+    "UBER",
+    "JPM",
+    "V",
+    "MA",
+    "COST",
+    "WMT",
+    "LLY",
+    "XOM",
+    "BA",
+    "DIS",
 ]
 
 if st.button("🚀 סרוק את כל המניות"):
