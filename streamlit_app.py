@@ -234,12 +234,14 @@ trade_return = (
 )
 total_value = st.session_state.cash + current_value
 profit = total_value - 10000.0
+target_value = 50000.0
+excess = max(0.0, total_value - target_value)
 st.metric("תשואה בעסקה", f"{trade_return:.2f}%")
-
 st.metric("שווי תיק", f"₪{total_value:,.2f}")
 st.metric("מזומן", f"₪{st.session_state.cash:,.2f}")
 st.metric("רווח / הפסד", f"₪{profit:,.2f}")
 st.metric("רווח / הפסד בעסקה", f"₪{trade_profit:,.2f}")
+st.metric("עודף מעל 50,000 ₪", f"₪{excess:,.2f}")
 st.write(
 f"📌 מחזיק כרגע: {st.session_state.holding}"
     )
