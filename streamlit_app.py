@@ -202,7 +202,7 @@ if st.session_state.holding is not None:
             * current_price
             / st.session_state.entry_price
         )
-       trade_profit = current_value - st.session_state.invested
+                   trade_profit = current_value - st.session_state.invested
     else:
         current_value = st.session_state.invested
         trade_profit = 0.0
