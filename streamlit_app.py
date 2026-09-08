@@ -188,6 +188,8 @@ if "winner" in locals() and winner[5] >= 80 and st.session_state.holding is None
         f"🟢 קנייה וירטואלית: {winner[0]} בסכום ₪{amount:,.2f}"
     )
 
+current_value = 0.0
+trade_profit = 0.0
 if st.session_state.holding is not None:
     current_price = None
 
