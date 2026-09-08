@@ -150,7 +150,7 @@ if "winner" in locals():
     else:
         st.error("🔴 החלטת הסוכן: לא לפעול כרגע")
     "⚠️ דמו בלבד — אין מסחר בכסף אמיתי"
-)
+
 st.divider()
 st.subheader("💰 תיק דמו")
 
