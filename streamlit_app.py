@@ -227,6 +227,26 @@ st.metric("רווח / הפסד בעסקה", f"₪{trade_profit:,.2f}")
 st.write(
 f"📌 מחזיק כרגע: {st.session_state.holding}"
     )
+if st.session_state.holding is not None:
+    if st.button("🔴 מכור עכשיו"):
+        sale_value = current_value
+        sale_profit = sale_value - st.session_state.invested
+
+        st.session_state.cash += sale_value
+
+        st.session_state.trade_log.append({
+            "מניה": st.session_state.holding,
+            "מחיר מכירה": current_price,
+            "סכום": sale_value,
+            "רווח / הפסד": sale_profit,
+            "פעולה": "מכירה"
+        })
+
+        st.session_state.holding = None
+        st.session_state.entry_price = 0.0
+        st.session_state.invested = 0.0
+
+        st.rerun()
 st.divider()
 st.subheader("📒 יומן עסקאות")
 
