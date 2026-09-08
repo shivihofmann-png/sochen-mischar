@@ -9,7 +9,7 @@ def save_state():
                  if key in st.session_state:
                                  data[key] = st.session_state[key]
         with open(STATE_FILE, "w") as f:
-        json.dump(data, f)
+            json.dump(data, f)
 
 def load_state():
         try:
