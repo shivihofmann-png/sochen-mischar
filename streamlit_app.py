@@ -1,6 +1,6 @@
 import streamlit as st
 import yfinance as yf
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 st.set_page_config(
     page_title="סוכן המסחר שלי",
     page_icon="🤖"
