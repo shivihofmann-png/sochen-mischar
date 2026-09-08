@@ -165,10 +165,18 @@ if "entry_price" not in st.session_state:
 
 if "invested" not in st.session_state:
     st.session_state.invested = 0.0
+    
+    if "trade_log" not in st.session_state:
+    st.session_state.trade_log = []
 
 if "winner" in locals() and winner[5] >= 80 and st.session_state.holding is None:
     amount = st.session_state.cash * 0.30
-
+st.session_state.trade_log.append({
+    "מניה": winner[0],
+    "מחיר קנייה": winner[1],
+    "סכום": amount,
+    "ציון": winner[5]
+})
     st.session_state.cash -= amount
     st.session_state.holding = winner[0]
     st.session_state.entry_price = winner[1]
