@@ -301,13 +301,4 @@ st.metric(
     "🏦 סה״כ הועבר לבנק",
     f'₪{st.session_state.bank_balance:,.2f}'
 )
-st.divider()
-st.subheader("🧪 בדיקת מנגנון 50,000")
 
-if st.button("בדוק עם תיק של ₪55,000"):
-    test_total = 55000.0
-    test_excess = max(0.0, test_total - 50000.0)
-
-    st.write(f"💼 שווי תיק לבדיקה: ₪{test_total:,.2f}")
-    st.write(f"🏦 סכום שאמור לעבור לבנק: ₪{test_excess:,.2f}")
-    st.write(f"📌 סכום שאמור להישאר בתיק: ₪{test_total - test_excess:,.2f}")
