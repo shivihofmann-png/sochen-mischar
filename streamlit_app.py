@@ -1,6 +1,6 @@
 import streamlit as st
 import yfinance as yf
-
+from datetime import datetime
 st.set_page_config(
     page_title="סוכן המסחר שלי",
     page_icon="🤖"
@@ -176,7 +176,8 @@ if "winner" in locals() and winner[5] >= 80 and st.session_state.holding is None
     "מניה": winner[0],
     "מחיר קנייה": winner[1],
     "סכום": amount,
-    "ציון": winner[5]
+    "ציון": winner[5],
+        "זמן קנייה": datetime.now().strftime("%d/%m/%Y %H:%M")
 })
     st.session_state.cash -= amount
     st.session_state.holding = winner[0]
