@@ -211,9 +211,15 @@ if st.session_state.holding is not None:
         )
     else:
         current_value = st.session_state.invested
-
+trade_return = (
+    (current_value / st.session_state.invested - 1) * 100
+    if st.session_state.invested > 0
+    else 0.0
+)
 total_value = st.session_state.cash + current_value
 profit = total_value - 10000.0
+st.metric("תשואה בעסקה", f"{trade_return:.2f}%")
+
 st.metric("שווי תיק", f"₪{total_value:,.2f}")
 st.metric("מזומן", f"₪{st.session_state.cash:,.2f}")
 st.metric("רווח / הפסד", f"₪{profit:,.2f}")
