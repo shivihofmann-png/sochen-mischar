@@ -166,7 +166,8 @@ if "entry_price" not in st.session_state:
 if "invested" not in st.session_state:
     st.session_state.invested = 0.0
     
-    if "trade_log" not in st.session_state:
+
+if "trade_log" not in st.session_state:
     st.session_state.trade_log = []
 
 if "winner" in locals() and winner[5] >= 80 and st.session_state.holding is None:
