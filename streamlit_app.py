@@ -191,34 +191,16 @@ if "winner" in locals() and winner[5] >= 80 and st.session_state.holding is None
 current_value = 0.0
 trade_profit = 0.0
 if st.session_state.holding is not None:
-    
-            current_data = yf.Ticker(st.session_state.holding).history(period="1d")
-            current_price = float(current_data["Close"].iloc[-1]) if not current_data.empty else None
-            
-        if st.session_state.holding is not None:
-    current_data = yf.Ticker(
-        st.session_state.holding
-    ).history(period="1d")
+    current_value = st.session_state.invested
+    current_data = yf.Ticker(st.session_state.holding).history(period="1d")
 
-    current_price = (
-        float(current_data["Close"].iloc[-1])
-        if not current_data.empty
-        else None
-    )
-
-    if current_price is not None:
+    if not current_data.empty:
+        current_price = float(current_data["Close"].iloc[-1])
         current_value = (
             st.session_state.invested
             * current_price
             / st.session_state.entry_price
         )
-    else:
-        current_value = st.session_state.invested
-                * current_price
-                / st.session_state.entry_price
-            )
-        
-        else:
             current_value = st.session_state.invested
     trade_profit = current_value - st.session_state.invested
     total_value = st.session_state.cash + current_value
