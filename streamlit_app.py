@@ -172,7 +172,7 @@ if "trade_log" not in st.session_state:
 
 if "winner" in locals() and winner[5] >= 80 and st.session_state.holding is None:
     amount = st.session_state.cash * 0.30
-st.session_state.trade_log.append({
+    st.session_state.trade_log.append({
     "מניה": winner[0],
     "מחיר קנייה": winner[1],
     "סכום": amount,
