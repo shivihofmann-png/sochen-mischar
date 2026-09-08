@@ -197,16 +197,16 @@ if st.session_state.holding is not None:
             break
 
             
-            if current_price is not None:
+        if current_price is not None:
             current_value = (
                 st.session_state.invested
                 * current_price
                 / st.session_state.entry_price
             )
-                trade_profit = current_value - st.session_state.invested
-            else:
+        
+        else:
             current_value = st.session_state.invested
-            trade_profit = 0.0
+    trade_profit = current_value - st.session_state.invested
     total_value = st.session_state.cash + current_value
     profit = total_value - 10000.0
     st.metric("שווי תיק", f"₪{total_value:,.2f}")
