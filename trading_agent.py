@@ -61,7 +61,7 @@ def get_data(symbol):
     if data.empty or len(data) < 50:
         return None
     close = data["Close"].squeeze()
-        usd_ils = get_usd_ils_rate()
+    usd_ils = get_usd_ils_rate()
 
     price = float(close.iloc[-1]) * usd_ils
     ma20 = float(close.rolling(20).mean().iloc[-1]) * usd_ils
