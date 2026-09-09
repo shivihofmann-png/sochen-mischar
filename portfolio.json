@@ -1,0 +1,20 @@
+{
+  "cash": 8637.74200624595,
+  "positions": {
+    "NVDA": {
+      "shares": 2,
+      "buy_price": 681.13,
+      "buy_date": "2026-09-09T13:26:55.258967"
+    }
+  },
+  "trades": [
+    {
+      "date": "2026-09-09T13:26:55.258974",
+      "action": "BUY",
+      "symbol": "NVDA",
+      "shares": 2,
+      "price": 681.13,
+      "value": 1362.26
+    }
+  ]
+}
