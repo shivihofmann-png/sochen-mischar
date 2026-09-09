@@ -3,7 +3,7 @@ import yfinance as yf
 from datetime import datetime, timezone, timedelta
 import json
 
-STATE_FILE = "portfolio_state.json"
+STATE_FILE = "portfolio.json"
 
 def save_state():
     data = {}
