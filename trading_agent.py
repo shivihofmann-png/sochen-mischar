@@ -18,7 +18,19 @@ STATE_FILE = "portfolio.json"
 # ניהול סיכון
 MAX_POSITION_PCT = 0.15      # עד 15% מהתיק בפוזיציה אחת
 MAX_POSITIONS = 6            # עד 6 מניות במקביל
+def get_usd_ils_rate():
+    data = yf.download(
+        "ILS=X",
+        period="5d",
+        interval="1d",
+        progress=False,
+        auto_adjust=True
+    )
 
+    if data.empty:
+        raise Exception("Could not get USD/ILS rate")
+
+    return float(data["Close"].squeeze().iloc[-1])
 
 def load_state():
     if os.path.exists(STATE_FILE):
@@ -39,8 +51,8 @@ def save_state(state):
 
 def get_data(symbol):
     data = yf.download(
-        symbol,
-        period="6mo",
+            symbol,
+        period="60mo",
         interval="1d",
         progress=False,
         auto_adjust=True
@@ -48,12 +60,12 @@ def get_data(symbol):
 
     if data.empty or len(data) < 50:
         return None
-
     close = data["Close"].squeeze()
+        usd_ils = get_usd_ils_rate()
 
-    price = float(close.iloc[-1])
-    ma20 = float(close.rolling(20).mean().iloc[-1])
-    ma50 = float(close.rolling(50).mean().iloc[-1])
+    price = float(close.iloc[-1]) * usd_ils
+    ma20 = float(close.rolling(20).mean().iloc[-1]) * usd_ils
+    ma50 = float(close.rolling(50).mean().iloc[-1]) * usd_ils
 
     return price, ma20, ma50
 
