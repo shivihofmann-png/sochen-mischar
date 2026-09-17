@@ -122,7 +122,7 @@ def main():
 
             _, ma20, ma50 = result
 
-            if price < ma20 or ma20 < ma50:
+            if price < ma50:
                 shares = position["shares"]
                 proceeds = shares * price
 
