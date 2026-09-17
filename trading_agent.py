@@ -16,7 +16,7 @@ SYMBOLS = [
 STATE_FILE = "portfolio.json"
 
 # ניהול סיכון
-MAX_POSITION_PCT = 0.15      # עד 15% מהתיק בפוזיציה אחת
+  MAX_POSITION_PCT = 0.20    # עד 15% מהתיק בפוזיציה אחת
 MAX_POSITIONS = 6            # עד 6 מניות במקביל
 def get_usd_ils_rate():
     data = yf.download(
